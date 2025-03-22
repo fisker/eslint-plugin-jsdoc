@@ -1,7 +1,6 @@
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
-import { createSyncFn } from 'synckit';
 import {
   getJSDocComment,
   parse as parseType,
@@ -11,9 +10,7 @@ import {
 import iterateJsdoc, {
   parseComment,
 } from '../iterateJsdoc.js';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const pathName = join(__dirname, '../import-worker.mjs');
+import parseImports from '../parse-imports.js';
 
 const extraTypes = [
   'null', 'undefined', 'void', 'string', 'boolean', 'object',
@@ -152,8 +149,7 @@ export default iterateJsdoc(({
       ? `${typePart}${name} ${description}`
       : `${typePart}${name}`);
 
-    const getImports = createSyncFn(pathName);
-    const imports = /** @type {import('parse-imports').Import[]} */ (getImports(imprt));
+    const imports = /** @type {import('parse-imports').Import[]} */ (parseImports(imprt));
     if (!imports) {
       return null;
     }
